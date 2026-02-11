@@ -92,26 +92,45 @@ class User:
 
     def __init__(self, client: Client, data: dict) -> None:
         self._client = client
-        core = data["core"]
+        core = data.get("core")
+        avatar = data.get("avatar")
+        location = data.get("location")
+        profile_bio = data.get("profile_bio")
+        verification = data.get("verification")
+        dm_permissions = data.get("dm_permissions")
+        media_permissions = data.get("media_permissions")
+        relationship_perspectives = data.get("relationship_perspectives")
         legacy = data["legacy"]
 
         self.id: str = data["rest_id"]
-        self.created_at: str = core["created_at"]
-        self.name: str = core["name"]
-        self.screen_name: str = core["screen_name"]
-        self.profile_image_url: str = data["avatar"]["image_url"]
+        self.created_at: str = core["created_at"] if core else legacy["created_at"]
+        self.name: str = core["name"] if core else legacy["name"]
+        self.screen_name: str = core["screen_name"] if core else legacy["screen_name"]
+        self.profile_image_url: str = (
+            avatar["image_url"] if avatar else legacy["profile_image_url_https"]
+        )
         self.profile_banner_url: str = legacy.get("profile_banner_url")
         self.url: str = legacy.get("url")
-        self.location: str = data["location"]["location"]
-        self.description: str = data["profile_bio"]["description"]
+        self.location: str = location["location"] if location else legacy["location"]
+        self.description: str = (
+            profile_bio["description"] if profile_bio else legacy["description"]
+        )
         self.description_urls: list = legacy["entities"]["description"]["urls"]
         self.urls: list = legacy["entities"].get("url", {}).get("urls")
         self.pinned_tweet_ids: list[str] = legacy["pinned_tweet_ids_str"]
         self.is_blue_verified: bool = data["is_blue_verified"]
-        self.verified: bool = data["verification"]["verified"]
+        self.verified: bool = (
+            verification["verified"] if verification else legacy["verified"]
+        )
         self.possibly_sensitive: bool = legacy["possibly_sensitive"]
-        self.can_dm: bool = data["dm_permissions"]["can_dm"]
-        self.can_media_tag: bool = data["media_permissions"]["can_media_tag"]
+        self.can_dm: bool = (
+            dm_permissions["can_dm"] if dm_permissions else legacy["can_dm"]
+        )
+        self.can_media_tag: bool = (
+            media_permissions["can_media_tag"]
+            if media_permissions
+            else legacy["can_media_tag"]
+        )
         self.want_retweets: bool = legacy["want_retweets"]
         self.default_profile: bool = legacy["default_profile"]
         self.default_profile_image: bool = legacy["default_profile_image"]
@@ -128,10 +147,14 @@ class User:
         self.translator_type: str = legacy["translator_type"]
         self.withheld_in_countries: list[str] = legacy["withheld_in_countries"]
         self.protected: bool = legacy.get("protected", False)
-        self.followed_by: bool = data["relationship_perspectives"].get(
+        self.followed_by: bool = (relationship_perspectives or legacy).get(
             "followed_by", False
         )
-        self.following: bool = data["relationship_perspectives"]["following"]
+        self.following: bool = (
+            relationship_perspectives["following"]
+            if relationship_perspectives
+            else legacy["following"]
+        )
 
     @property
     def created_at_datetime(self) -> datetime:
