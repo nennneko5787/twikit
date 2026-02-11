@@ -153,7 +153,7 @@ class User:
         self.following: bool = (
             relationship_perspectives["following"]
             if relationship_perspectives
-            else legacy["following"]
+            else legacy.get("following", False)
         )
 
     @property
