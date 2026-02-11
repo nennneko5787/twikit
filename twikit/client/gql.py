@@ -67,10 +67,10 @@ class Endpoint:
     EDIT_BOOKMARK_FOLDER = url("a6kPp1cS1Dgbsjhapz1PNw/EditBookmarkFolder")
     DELETE_BOOKMARK_FOLDER = url("2UTTsO-6zs93XqlEUZPsSg/DeleteBookmarkFolder")
     CREATE_BOOKMARK_FOLDER = url("6Xxqpq8TM_CREYiuof_h5w/createBookmarkFolder")
-    FOLLOWERS = url("gC_lyAxZOptAMLCJX5UhWw/Followers")
-    BLUE_VERIFIED_FOLLOWERS = url("VmIlPJNEDVQ29HfzIhV4mw/BlueVerifiedFollowers")
-    FOLLOWERS_YOU_KNOW = url("f2tbuGNjfOE8mNUO5itMew/FollowersYouKnow")
-    FOLLOWING = url("2vUj-_Ek-UmBVDNtd8OnQA/Following")
+    FOLLOWERS = url("efNzdTpE-mkUcLARCd3RPQ/Followers")
+    BLUE_VERIFIED_FOLLOWERS = url("YGl_IyrL0bFU7KHxQoSRVg/BlueVerifiedFollowers")
+    FOLLOWERS_YOU_KNOW = url("dwvizjS4AcL6qn-i7Rgbdg/FollowersYouKnow")
+    FOLLOWING = url("M3LO-sJg6BCWdEliN_C2fQ/Following")
     USER_CREATOR_SUBSCRIPTIONS = url("Wsm5ZTCYtg2eH7mXAXPIgw/UserCreatorSubscriptions")
     USER_DM_REACTION_MUTATION_ADD_MUTATION = url(
         "VyDyV9pC2oZEj6g52hgnhA/useDMReactionMutationAddMutation"
