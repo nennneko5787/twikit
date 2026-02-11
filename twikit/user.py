@@ -127,10 +127,12 @@ class User:
         self.translator_type: str = legacy["translator_type"]
         self.withheld_in_countries: list[str] = legacy["withheld_in_countries"]
         self.protected: bool = legacy.get("protected", False)
-        self.followed_by: bool = data["relationship_perspectives"].get(
+        self.followed_by: bool = data.get("relationship_perspectives", {}).get(
             "followed_by", False
         )
-        self.following: bool = data["relationship_perspectives"]["following"]
+        self.following: bool = data.get("relationship_perspectives", {}).get(
+            "following", False
+        )
 
     @property
     def created_at_datetime(self) -> datetime:
