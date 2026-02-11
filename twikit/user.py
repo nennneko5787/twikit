@@ -111,7 +111,9 @@ class User:
         )
         self.profile_banner_url: str = legacy.get("profile_banner_url")
         self.url: str = legacy.get("url")
-        self.location: str = location["location"] if location else legacy["location"]
+        self.location: str = (
+            location["location"] if isinstance(location, dict) else legacy["location"]
+        )
         self.description: str = (
             profile_bio["description"] if profile_bio else legacy["description"]
         )
