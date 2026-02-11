@@ -92,25 +92,26 @@ class User:
 
     def __init__(self, client: Client, data: dict) -> None:
         self._client = client
+        core = data["core"]
         legacy = data["legacy"]
 
         self.id: str = data["rest_id"]
-        self.created_at: str = legacy["created_at"]
-        self.name: str = legacy["name"]
-        self.screen_name: str = legacy["screen_name"]
-        self.profile_image_url: str = legacy["profile_image_url_https"]
+        self.created_at: str = core["created_at"]
+        self.name: str = core["name"]
+        self.screen_name: str = core["screen_name"]
+        self.profile_image_url: str = data["avatar"]["image_url"]
         self.profile_banner_url: str = legacy.get("profile_banner_url")
         self.url: str = legacy.get("url")
-        self.location: str = legacy["location"]
-        self.description: str = legacy["description"]
+        self.location: str = data["location"]["location"]
+        self.description: str = data["profile_bio"]["description"]
         self.description_urls: list = legacy["entities"]["description"]["urls"]
         self.urls: list = legacy["entities"].get("url", {}).get("urls")
         self.pinned_tweet_ids: list[str] = legacy["pinned_tweet_ids_str"]
         self.is_blue_verified: bool = data["is_blue_verified"]
-        self.verified: bool = legacy["verified"]
+        self.verified: bool = data["verification"]["verified"]
         self.possibly_sensitive: bool = legacy["possibly_sensitive"]
-        self.can_dm: bool = legacy["can_dm"]
-        self.can_media_tag: bool = legacy["can_media_tag"]
+        self.can_dm: bool = data["dm_permissions"]["can_dm"]
+        self.can_media_tag: bool = data["media_permissions"]["can_media_tag"]
         self.want_retweets: bool = legacy["want_retweets"]
         self.default_profile: bool = legacy["default_profile"]
         self.default_profile_image: bool = legacy["default_profile_image"]
@@ -127,12 +128,10 @@ class User:
         self.translator_type: str = legacy["translator_type"]
         self.withheld_in_countries: list[str] = legacy["withheld_in_countries"]
         self.protected: bool = legacy.get("protected", False)
-        self.followed_by: bool = data.get("relationship_perspectives", {}).get(
+        self.followed_by: bool = data["relationship_perspectives"].get(
             "followed_by", False
         )
-        self.following: bool = data.get("relationship_perspectives", {}).get(
-            "following", False
-        )
+        self.following: bool = data["relationship_perspectives"]["following"]
 
     @property
     def created_at_datetime(self) -> datetime:
