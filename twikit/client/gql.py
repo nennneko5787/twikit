@@ -31,7 +31,7 @@ class Endpoint:
     def url(path):
         return f"https://{DOMAIN}/i/api/graphql/{path}"
 
-    SEARCH_TIMELINE = url("flaR-PUMshxFWZWPNpq4zA/SearchTimeline")
+    SEARCH_TIMELINE = url("cGK-Qeg1XJc2sZ6kgQw_Iw/SearchTimeline")
     SIMILAR_POSTS = url("EToazR74i0rJyZYalfVEAQ/SimilarPosts")
     CREATE_NOTE_TWEET = url("iCUB42lIfXf9qPKctjE5rQ/CreateNoteTweet")
     CREATE_TWEET = url("SiM_cAu83R0wnrpmKQQSEw/CreateTweet")
@@ -113,6 +113,9 @@ class Endpoint:
         "5341rmzzvdjqfmPKfoHUBw/CommunityTweetSearchModuleQuery"
     )
     TWEET_RESULTS_BY_REST_IDS = url("PTN9HhBAlpoCTHfspDgqLA/TweetResultsByRestIds")
+    GET_USERNAME_AVAILABILITY_AND_SUGGESTIONS = url(
+        "1bMz-9lPrmIXrhFmXntTHw/GetUsernameAvailabilityAndSuggestions"
+    )
 
 
 class GQLClient:
@@ -701,6 +704,19 @@ class GQLClient:
             Endpoint.TWEET_RESULTS_BY_REST_IDS,
             variables,
             TWEET_RESULTS_BY_REST_IDS_FEATURES,
+        )
+
+    async def get_username_availability_and_suggestions(
+        self, username: str, *, include_suggestions: bool
+    ):
+        variables = {
+            "include_suggestions": include_suggestions,
+            "session_token": "",
+            "username": username,
+        }
+        return await self.gql_post(
+            Endpoint.GET_USERNAME_AVAILABILITY_AND_SUGGESTIONS,
+            variables,
         )
 
     ####################

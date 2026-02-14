@@ -58,6 +58,7 @@ class Endpoint:
         f"https://{DOMAIN}/i/api/1.1/report/flow.json?flow_name=report-flow"
     )
     REPORT_TWEET = f"https://{DOMAIN}/i/api/1.1/report/flow.json"
+    TYPE_A_HEAD = f"https://{DOMAIN}/i/api/1.1/search/typeahead.json"
 
 
 class V11Client:
@@ -477,4 +478,18 @@ class V11Client:
             endpoint,
             headers=self.base._base_headers,
             json=payload,
+        )
+
+    async def type_a_head(self, query: str):
+        params = {
+            "include_ext_is_blue_verified": 1,
+            "include_ext_verified_type": 1,
+            "include_ext_profile_image_shape": 1,
+            "q": query,
+            "src": "search_box",
+            "result_type": "events,users,topics,lists",
+        }
+
+        return await self.base.get(
+            Endpoint.TYPE_A_HEAD, headers=self.base._base_headers, params=params
         )

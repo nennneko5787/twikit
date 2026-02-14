@@ -7,7 +7,7 @@ import os
 import uuid
 import warnings
 from functools import partial
-from typing import Any, AsyncGenerator, Literal
+from typing import Any, AsyncGenerator, List, Literal, Optional, Tuple, Union, overload
 from urllib.parse import urlparse
 
 import filetype
@@ -45,6 +45,7 @@ from ..notification import Notification
 from ..streaming import Payload, StreamingSession, _payload_from_data
 from ..trend import Location, PlaceTrend, PlaceTrends, Trend
 from ..tweet import CommunityNote, Poll, ScheduledTweet, Tweet, tweet_from_data
+from ..type_a_head import SuggestionResult
 from ..ui_metrics import solve_ui_metrics
 from ..user import User
 from ..utils import (
@@ -4440,8 +4441,45 @@ class Client:
         user_id: str,
         screen_name: str,
         category: str,
-        sub_category: str,
+        sub_category: Optional[str] = None,
     ) -> bool:
+        """
+        Report the tweet.
+
+        Parameters
+        ----------
+        tweet_id : :class:`str`
+            The ID of the tweet to be reported.
+        user_id : :class:`str`
+            The ID of the author of the tweet to be reported.
+        screen_name : :class:`str`
+            The screen name of the author of the tweet to be reported.
+        category : :class:`str`
+            The main category of reason which you report the tweet.
+        sub_category : :class:`str`, default=None
+            The sub category of reason which you report the tweet.
+
+        Returns
+        -------
+        :class:`bool`
+            Whether or not the tweet was reported.
+
+        Examples
+        --------
+        >>> # send DM with media
+        >>> tweet_id = '000000000'
+        >>> user_id = '000000000'
+        >>> screen_name = 'example'
+        >>> category = 'HATEFUL_CONDUCT'
+        >>> sub_category = 'USING_SLURS'
+        >>> result = await client.report_tweet(tweet_id, user_id, screen_name, category, sub_category)
+        >>> print(result)
+        True
+
+        See Also
+        --------
+        """
+
         flow_id = str(uuid.uuid4())
 
         payload = self._build_report_tweet_new_payload(
@@ -4469,3 +4507,44 @@ class Client:
             return True
 
         return False
+
+    @overload
+    async def get_username_availability_and_suggestions(
+        self, username: str, *, include_suggestions: bool = True
+    ) -> Tuple[bool, List[str]]: ...
+
+    @overload
+    async def get_username_availability_and_suggestions(
+        self, username: str, *, include_suggestions: Literal[True]
+    ) -> Tuple[bool, List[str]]: ...
+
+    @overload
+    async def get_username_availability_and_suggestions(
+        self, username: str, *, include_suggestions: Literal[False]
+    ) -> bool: ...
+
+    async def get_username_availability_and_suggestions(
+        self, username: str, *, include_suggestions: bool = True
+    ) -> Union[bool, tuple[bool, list[str]]]:
+        # あとでdocstringを書く
+
+        response, _ = await self.gql.get_username_availability_and_suggestions(
+            username, include_suggestions=include_suggestions
+        )
+
+        available = response["data"]["get_username_availability_and_suggestions"][
+            "available"
+        ]
+        if include_suggestions:
+            suggestions = response["data"]["get_username_availability_and_suggestions"][
+                "suggestions"
+            ]
+            return available, suggestions
+        else:
+            return available
+
+    async def type_a_head(self, query: str) -> SuggestionResult:
+        # 後でdocstringを書く
+        response, _ = await self.v11.type_a_head(query)
+
+        return SuggestionResult(response)
